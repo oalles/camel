@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -54,7 +54,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  * as well as supporting accessing components and beans via the Spring
  * {@link ApplicationContext}
  *
- * @version 
+ * @version
  */
 public class SpringCamelContext extends DefaultCamelContext implements Lifecycle, ApplicationContextAware, Phased,
         ApplicationListener<ApplicationEvent>, Ordered {
@@ -159,7 +159,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
     public void onApplicationEvent(ApplicationEvent event) {
         LOG.debug("onApplicationEvent: {}", event);
 
-        if (event instanceof ContextRefreshedEvent) {
+        if (event instanceof ContextRefreshedEvent && ((ContextRefreshedEvent) event).getApplicationContext().getId().equals(this.applicationContext.getId())) {
             // nominally we would prefer to use Lifecycle interface that
             // would invoke start() method, but in order to do that 
             // SpringCamelContext needs to implement SmartLifecycle
@@ -258,10 +258,10 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
     @Override
     protected Injector createInjector() {
         if (applicationContext instanceof ConfigurableApplicationContext) {
-            return new SpringInjector((ConfigurableApplicationContext)applicationContext);
+            return new SpringInjector((ConfigurableApplicationContext) applicationContext);
         } else {
             LOG.warn("Cannot use SpringInjector as applicationContext is not a ConfigurableApplicationContext as its: "
-                      + applicationContext);
+                    + applicationContext);
             return super.createInjector();
         }
     }

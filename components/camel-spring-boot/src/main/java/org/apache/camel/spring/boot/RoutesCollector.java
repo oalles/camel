@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -84,7 +84,8 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
         CamelContext camelContext = applicationContext.getBean(CamelContext.class);
 
         // only add and start Camel if its stopped (initial state)
-        if (camelContext.getStatus().isStopped()) {
+        if (((ContextRefreshedEvent) event).getApplicationContext().getId().equals(this.applicationContext.getId())
+                && camelContext.getStatus().isStopped()) {
             LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
 
             final AntPathMatcher matcher = new AntPathMatcher();
@@ -164,8 +165,8 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                         }
                         // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
                         EventNotifier notifier = new MainDurationEventNotifier(camelContext,
-                            configurationProperties.getDurationMaxMessages(), configurationProperties.getDurationMaxIdleSeconds(),
-                            controller.getCompleted(), controller.getLatch(), true);
+                                configurationProperties.getDurationMaxMessages(), configurationProperties.getDurationMaxIdleSeconds(),
+                                controller.getCompleted(), controller.getLatch(), true);
                         // register our event notifier
                         ServiceHelper.startService(notifier);
                         camelContext.getManagementStrategy().addEventNotifier(notifier);
@@ -174,7 +175,7 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                     if (configurationProperties.getDurationMaxSeconds() > 0) {
                         LOG.info("CamelSpringBoot will terminate after {} seconds", configurationProperties.getDurationMaxSeconds());
                         terminateMainControllerAfter(camelContext, configurationProperties.getDurationMaxSeconds(),
-                            controller.getCompleted(), controller.getLatch());
+                                controller.getCompleted(), controller.getLatch());
                     }
 
                     camelContext.addStartupListener(new StartupListener() {
@@ -213,8 +214,8 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
 
                             // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
                             EventNotifier notifier = new MainDurationEventNotifier(camelContext,
-                                configurationProperties.getDurationMaxMessages(), configurationProperties.getDurationMaxIdleSeconds(),
-                                completed, latch, false);
+                                    configurationProperties.getDurationMaxMessages(), configurationProperties.getDurationMaxIdleSeconds(),
+                                    completed, latch, false);
                             // register our event notifier
                             ServiceHelper.startService(notifier);
                             camelContext.getManagementStrategy().addEventNotifier(notifier);
